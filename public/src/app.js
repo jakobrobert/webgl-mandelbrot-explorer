@@ -44,7 +44,14 @@ function start(vertShaderSource, fragShaderSource) {
     if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
         throw new Error("Program validate error: " + gl.getShaderInfoLog(program));
     }
-    gl.useProgram(program); // directly use program, is the only one used in this app
+
+    // directly use program, is the only one used in this app
+    gl.useProgram(program);
+
+    // Setup uniforms
+    const viewportSizeUniform = gl.getUniformLocation(program, "viewportSize");
+    const viewportSize = [canvas.width, canvas.height];
+    gl.uniform2fv(viewportSizeUniform, viewportSize);
 
     // Create vertex buffer
     const vertexData = [
