@@ -8,8 +8,6 @@ const float minImg = -2.0;
 const float maxImg = 2.0;
 const int maxNumIterations = 2000;
 
-// TODO: Refactor -> use built-in vector operations
-
 void main() {
     // convert screen coordinate to complex number
     float real = gl_FragCoord.x * (maxReal - minReal) / viewportSize.x + minReal;
@@ -36,6 +34,5 @@ void main() {
         discard;
     }
 
-    // TODO: fine tune with color mapping
     gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }
