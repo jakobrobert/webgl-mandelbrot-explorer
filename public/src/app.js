@@ -1,4 +1,10 @@
+const FPS_UPDATE_INTERVAL = 250;
+
 let gl;
+
+let fpsLabel;
+let lastTime;
+let frameCount = 0;
 
 function init() {
     fetch("assets/shaders/mandelbrot.vert.glsl")
@@ -15,6 +21,8 @@ function start(vertexShaderSource, fragmentShaderSource) {
         alert("Your browser does not support WebGL!");
         return;
     }
+
+    fpsLabel = document.getElementById("fps");
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -50,6 +58,8 @@ function start(vertexShaderSource, fragmentShaderSource) {
     // Set uniforms
     const viewportSize = [canvas.width, canvas.height];
     gl.uniform2fv(viewportSizeUniform, viewportSize);
+
+    lastTime = performance.now();
 
     requestAnimationFrame(doRenderLoop);
 }
@@ -93,5 +103,18 @@ function doRenderLoop() {
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
+    updateFPS();
+
     requestAnimationFrame(doRenderLoop);
+}
+
+function updateFPS() {
+    let currTime = performance.now();
+    frameCount++;
+    if (currTime - lastTime >= FPS_UPDATE_INTERVAL) {
+        const fps = frameCount / FPS_UPDATE_INTERVAL * 1000.0;
+        fpsLabel.innerText = "FPS: " + fps;
+        lastTime = currTime;
+        frameCount = 0;
+    }
 }
