@@ -111,9 +111,10 @@ function doRenderLoop() {
 function updateFPS() {
     let currTime = performance.now();
     frameCount++;
-    if (currTime - lastTime >= FPS_UPDATE_INTERVAL) {
-        const fps = frameCount / FPS_UPDATE_INTERVAL * 1000.0;
-        fpsLabel.innerText = "FPS: " + fps;
+    const interval = currTime - lastTime;
+    if (interval >= FPS_UPDATE_INTERVAL) {
+        const fps = frameCount / interval * 1000.0;
+        fpsLabel.innerText = "FPS: " + fps.toFixed(1);
         lastTime = currTime;
         frameCount = 0;
     }
