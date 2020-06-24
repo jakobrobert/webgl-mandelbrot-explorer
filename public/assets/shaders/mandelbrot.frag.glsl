@@ -10,8 +10,11 @@ const int maxNumIterations = 2000;
 
 void main() {
     // convert screen coordinate to complex number
-    float real = gl_FragCoord.x * (maxReal - minReal) / viewportSize.x + minReal;
-    float img = gl_FragCoord.y * (maxImg - minImg) / viewportSize.y + minImg;
+    float aspectRatio = viewportSize.x / viewportSize.y;
+    float x = gl_FragCoord.x / viewportSize.x;
+    float y = gl_FragCoord.y / viewportSize.y / aspectRatio;
+    float real = x * (maxReal - minReal) + minReal;
+    float img = y * (maxImg - minImg) + minImg;
     vec2 c = vec2(real, img);
 
     vec2 z = c; // TODO: must start with 0 instead?
