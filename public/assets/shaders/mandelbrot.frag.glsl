@@ -1,17 +1,17 @@
 precision highp float;
 
-uniform vec2 viewportSize;
-
-const float minReal = -2.0;
-const float maxReal = 2.0;
-const float minImg = -2.0;
-const float maxImg = 2.0;
 const int maxNumIterations = 2000;
+
+uniform vec2 viewportSize;
+uniform float minReal;
+uniform float maxReal;
+uniform float minImg;
+uniform float maxImg;
 
 void main() {
     // convert screen coordinate to complex number
-    float real = gl_FragCoord.x * (maxReal - minReal) / viewportSize.x + minReal;
-    float img = gl_FragCoord.y * (maxImg - minImg) / viewportSize.y + minImg;
+    float real = (gl_FragCoord.x / viewportSize.x) * (maxReal - minReal) + minReal;
+    float img = (gl_FragCoord.y / viewportSize.y) * (maxImg - minImg) + minImg;
     vec2 c = vec2(real, img);
 
     vec2 z = c; // TODO: must start with 0 instead?

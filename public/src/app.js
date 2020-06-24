@@ -41,7 +41,13 @@ function start(vertexShaderSource, fragmentShaderSource) {
     const vertexBuffer = createVertexBuffer(vertexData);
 
     // Get uniform locations
-    const viewportSizeUniform = gl.getUniformLocation(program, "viewportSize");
+    const uniforms = {
+        viewportSize: gl.getUniformLocation(program, "viewportSize"),
+        minReal: gl.getUniformLocation(program, "minReal"),
+        maxReal: gl.getUniformLocation(program, "maxReal"),
+        minImg: gl.getUniformLocation(program, "minImg"),
+        maxImg: gl.getUniformLocation(program, "maxImg"),
+    }
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -55,9 +61,20 @@ function start(vertexShaderSource, fragmentShaderSource) {
     gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false,
         2 * Float32Array.BYTES_PER_ELEMENT, 0);
 
-    // Set uniforms
+    // Set CPU-Side variables
     const viewportSize = [canvas.width, canvas.height];
-    gl.uniform2fv(viewportSizeUniform, viewportSize);
+    const aspectRatio = canvas.width / canvas.height;
+    const minReal = -2.0;
+    const maxReal = 2.0;
+    const minImg = -2.0 / aspectRatio;
+    const maxImg = 2.0 / aspectRatio;
+
+    // Set uniforms
+    gl.uniform2fv(uniforms.viewportSize, viewportSize);
+    gl.uniform1f(uniforms.minReal, minReal);
+    gl.uniform1f(uniforms.maxReal, maxReal);
+    gl.uniform1f(uniforms.minImg, minImg);
+    gl.uniform1f(uniforms.maxImg, maxImg);
 
     lastTime = performance.now();
 
