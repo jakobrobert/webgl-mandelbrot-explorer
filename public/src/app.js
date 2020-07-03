@@ -16,6 +16,8 @@ let maxImg;
 
 let uniforms;
 
+let mousePressed = false;
+
 function init() {
     fetch("assets/shaders/mandelbrot.vert.glsl")
         .then(response => response.text())
@@ -35,6 +37,9 @@ function start(vertexShaderSource, fragmentShaderSource) {
     fpsLabel = document.getElementById("fps");
 
     addEventListener("wheel", onZoom);
+    addEventListener("mousedown", onMouseDown);
+    addEventListener("mouseup", onMouseUp);
+    addEventListener("mousemove", onMouseMove);
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -166,4 +171,23 @@ function onZoom(event) {
     maxReal *= factor;
     minImg *= factor;
     maxImg *= factor;
+}
+
+function onMouseDown(event) {
+    if (event.button === 0) {
+        mousePressed = true;
+    }
+}
+
+function onMouseUp(event) {
+    if (event.button === 0) {
+        mousePressed = false;
+    }
+}
+
+function onMouseMove(event) {
+    if (!mousePressed) {
+        return;
+    }
+    console.log("mouse moved by: " + event.movementX + ", " + event.movementY);
 }
