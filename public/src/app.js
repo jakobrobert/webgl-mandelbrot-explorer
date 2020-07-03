@@ -168,10 +168,15 @@ function onZoom(event) {
         // probably never occurs
         return;
     }
-    minReal *= factor;
-    maxReal *= factor;
-    minImg *= factor;
-    maxImg *= factor;
+    // Keep center point the same, zoom about this point
+    const centerReal = 0.5 * (minReal + maxReal);
+    const centerImg = 0.5 * (minImg + maxImg);
+    const newRealRange = factor * (maxReal - minReal);
+    const newImgRange = factor * (maxImg - minImg);
+    minReal = centerReal - 0.5 * newRealRange;
+    maxReal = centerReal + 0.5 * newRealRange;
+    minImg = centerImg - 0.5 * newImgRange;
+    maxImg = centerImg + 0.5 * newImgRange;
 }
 
 function onMouseDown(event) {
