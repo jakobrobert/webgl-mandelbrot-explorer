@@ -2,6 +2,7 @@ const FPS_UPDATE_INTERVAL = 250;
 
 const ZOOM_FACTOR = 1.05;
 
+let canvas;
 let gl;
 
 let fpsLabel;
@@ -27,7 +28,7 @@ function init() {
 }
 
 function start(vertexShaderSource, fragmentShaderSource) {
-    const canvas = document.getElementById("gl-canvas");
+    canvas = document.getElementById("gl-canvas");
     gl = canvas.getContext("webgl");
     if (!gl) {
         alert("Your browser does not support WebGL!");
@@ -189,5 +190,12 @@ function onMouseMove(event) {
     if (!mousePressed) {
         return;
     }
-    console.log("mouse moved by: " + event.movementX + ", " + event.movementY);
+    const realDelta = (event.movementX / canvas.width) * (maxReal - minReal);
+    const imgDelta = (event.movementY / canvas.height) * (maxImg - minImg);
+    // inverted, moving mouse to the right moves viewport to the left
+    minReal -= realDelta;
+    maxReal -= realDelta;
+    // + instead of - for img because y-axis is inverted
+    minImg += imgDelta;
+    maxImg += imgDelta;
 }
