@@ -2,6 +2,7 @@ const FPS_UPDATE_INTERVAL = 250;
 
 const ZOOM_FACTOR = 1.05;
 
+let canvas;
 let gl;
 
 let fpsLabel;
@@ -16,6 +17,8 @@ let maxImg;
 
 let uniforms;
 
+let mousePressed = false;
+
 function init() {
     fetch("assets/shaders/mandelbrot.vert.glsl")
         .then(response => response.text())
@@ -25,7 +28,7 @@ function init() {
 }
 
 function start(vertexShaderSource, fragmentShaderSource) {
-    const canvas = document.getElementById("gl-canvas");
+    canvas = document.getElementById("gl-canvas");
     gl = canvas.getContext("webgl");
     if (!gl) {
         alert("Your browser does not support WebGL!");
@@ -35,6 +38,9 @@ function start(vertexShaderSource, fragmentShaderSource) {
     fpsLabel = document.getElementById("fps");
 
     addEventListener("wheel", onZoom);
+    addEventListener("mousedown", onMouseDown);
+    addEventListener("mouseup", onMouseUp);
+    addEventListener("mousemove", onMouseMove);
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -162,8 +168,39 @@ function onZoom(event) {
         // probably never occurs
         return;
     }
-    minReal *= factor;
-    maxReal *= factor;
-    minImg *= factor;
-    maxImg *= factor;
+    // Keep center point the same, zoom about this point
+    const centerReal = 0.5 * (minReal + maxReal);
+    const centerImg = 0.5 * (minImg + maxImg);
+    const newRealRange = factor * (maxReal - minReal);
+    const newImgRange = factor * (maxImg - minImg);
+    minReal = centerReal - 0.5 * newRealRange;
+    maxReal = centerReal + 0.5 * newRealRange;
+    minImg = centerImg - 0.5 * newImgRange;
+    maxImg = centerImg + 0.5 * newImgRange;
+}
+
+function onMouseDown(event) {
+    if (event.button === 0) {
+        mousePressed = true;
+    }
+}
+
+function onMouseUp(event) {
+    if (event.button === 0) {
+        mousePressed = false;
+    }
+}
+
+function onMouseMove(event) {
+    if (!mousePressed) {
+        return;
+    }
+    const realDelta = (event.movementX / canvas.width) * (maxReal - minReal);
+    const imgDelta = (event.movementY / canvas.height) * (maxImg - minImg);
+    // inverted, moving mouse to the right moves viewport to the left
+    minReal -= realDelta;
+    maxReal -= realDelta;
+    // + instead of - for img because y-axis is inverted
+    minImg += imgDelta;
+    maxImg += imgDelta;
 }
