@@ -1,10 +1,20 @@
 const FPS_UPDATE_INTERVAL = 250;
 
+const ZOOM_FACTOR = 1.05;
+
 let gl;
 
 let fpsLabel;
 let lastTime;
 let frameCount = 0;
+
+let viewportSize;
+let minReal;
+let maxReal;
+let minImg;
+let maxImg;
+
+let uniforms;
 
 function init() {
     fetch("assets/shaders/mandelbrot.vert.glsl")
@@ -24,6 +34,8 @@ function start(vertexShaderSource, fragmentShaderSource) {
 
     fpsLabel = document.getElementById("fps");
 
+    addEventListener("wheel", onZoom);
+
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
     const program = createProgram(vertexShader, fragmentShader);
@@ -41,7 +53,7 @@ function start(vertexShaderSource, fragmentShaderSource) {
     const vertexBuffer = createVertexBuffer(vertexData);
 
     // Get uniform locations
-    const uniforms = {
+    uniforms = {
         viewportSize: gl.getUniformLocation(program, "viewportSize"),
         minReal: gl.getUniformLocation(program, "minReal"),
         maxReal: gl.getUniformLocation(program, "maxReal"),
@@ -62,19 +74,12 @@ function start(vertexShaderSource, fragmentShaderSource) {
         2 * Float32Array.BYTES_PER_ELEMENT, 0);
 
     // Set CPU-Side variables
-    const viewportSize = [canvas.width, canvas.height];
+    viewportSize = [canvas.width, canvas.height];
     const aspectRatio = canvas.width / canvas.height;
-    const minReal = -2.0;
-    const maxReal = 2.0;
-    const minImg = -2.0 / aspectRatio;
-    const maxImg = 2.0 / aspectRatio;
-
-    // Set uniforms
-    gl.uniform2fv(uniforms.viewportSize, viewportSize);
-    gl.uniform1f(uniforms.minReal, minReal);
-    gl.uniform1f(uniforms.maxReal, maxReal);
-    gl.uniform1f(uniforms.minImg, minImg);
-    gl.uniform1f(uniforms.maxImg, maxImg);
+    minReal = -2.0;
+    maxReal = 2.0;
+    minImg = -2.0 / aspectRatio;
+    maxImg = 2.0 / aspectRatio;
 
     lastTime = performance.now();
 
@@ -118,6 +123,13 @@ function createVertexBuffer(data) {
 function doRenderLoop() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    // Set uniforms
+    gl.uniform2fv(uniforms.viewportSize, viewportSize);
+    gl.uniform1f(uniforms.minReal, minReal);
+    gl.uniform1f(uniforms.maxReal, maxReal);
+    gl.uniform1f(uniforms.minImg, minImg);
+    gl.uniform1f(uniforms.maxImg, maxImg);
+
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     updateFPS();
@@ -135,4 +147,23 @@ function updateFPS() {
         lastTime = currTime;
         frameCount = 0;
     }
+}
+
+function onZoom(event) {
+    event.preventDefault(); // to prevent scrolling
+    let factor;
+    if (event.deltaY < 0) {
+        // wheel up -> decrease range to zoom in
+        factor = 1.0 / ZOOM_FACTOR;
+    } else if (event.deltaY > 0) {
+        // wheel down -> increase range to zoom out
+        factor = ZOOM_FACTOR;
+    } else {
+        // probably never occurs
+        return;
+    }
+    minReal *= factor;
+    maxReal *= factor;
+    minImg *= factor;
+    maxImg *= factor;
 }
