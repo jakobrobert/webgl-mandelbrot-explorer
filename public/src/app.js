@@ -9,6 +9,7 @@ let fpsLabel;
 let lastTime;
 let frameCount = 0;
 
+let maxIterationCount;
 let viewportSize;
 let minReal;
 let maxReal;
@@ -27,6 +28,11 @@ function init() {
             .then(fragmentShaderSource => start(vertexShaderSource, fragmentShaderSource)));
 }
 
+function onIterationsSliderChanged() {
+    maxIterationCount = document.getElementById("iterationsSlider").value;
+    document.getElementById("iterationsLabel").innerText = maxIterationCount;
+}
+
 function start(vertexShaderSource, fragmentShaderSource) {
     canvas = document.getElementById("gl-canvas");
     gl = canvas.getContext("webgl");
@@ -34,6 +40,11 @@ function start(vertexShaderSource, fragmentShaderSource) {
         alert("Your browser does not support WebGL!");
         return;
     }
+
+    // small hack: need to set initial value of slider,
+    // for some reason slider always gets the max value as the initial
+    document.getElementById("iterationsSlider").value = 200;
+    onIterationsSliderChanged();
 
     fpsLabel = document.getElementById("fps");
 
@@ -60,6 +71,7 @@ function start(vertexShaderSource, fragmentShaderSource) {
 
     // Get uniform locations
     uniforms = {
+        maxIterationCount: gl.getUniformLocation(program, "maxIterationCount"),
         viewportSize: gl.getUniformLocation(program, "viewportSize"),
         minReal: gl.getUniformLocation(program, "minReal"),
         maxReal: gl.getUniformLocation(program, "maxReal"),
@@ -129,7 +141,8 @@ function createVertexBuffer(data) {
 function doRenderLoop() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Set uniforms
+    // Update uniforms
+    gl.uniform1i(uniforms.maxIterationCount, maxIterationCount);
     gl.uniform2fv(uniforms.viewportSize, viewportSize);
     gl.uniform1f(uniforms.minReal, minReal);
     gl.uniform1f(uniforms.maxReal, maxReal);
