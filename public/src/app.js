@@ -41,7 +41,9 @@ function start(vertexShaderSource, fragmentShaderSource) {
         return;
     }
 
-    // call for initial value of slider
+    // small hack: need to set initial value of slider,
+    // for some reason slider always gets the max value as the initial
+    document.getElementById("iterationsSlider").value = 200;
     onIterationsSliderChanged();
 
     fpsLabel = document.getElementById("fps");
