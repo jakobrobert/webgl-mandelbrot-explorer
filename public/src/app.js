@@ -9,6 +9,7 @@ let fpsLabel;
 let lastTime;
 let frameCount = 0;
 
+let maxIterationCount;
 let viewportSize;
 let minReal;
 let maxReal;
@@ -60,6 +61,7 @@ function start(vertexShaderSource, fragmentShaderSource) {
 
     // Get uniform locations
     uniforms = {
+        maxIterationCount: gl.getUniformLocation(program, "maxIterationCount"),
         viewportSize: gl.getUniformLocation(program, "viewportSize"),
         minReal: gl.getUniformLocation(program, "minReal"),
         maxReal: gl.getUniformLocation(program, "maxReal"),
@@ -80,6 +82,7 @@ function start(vertexShaderSource, fragmentShaderSource) {
         2 * Float32Array.BYTES_PER_ELEMENT, 0);
 
     // Set CPU-Side variables
+    maxIterationCount = 2000;
     viewportSize = [canvas.width, canvas.height];
     const aspectRatio = canvas.width / canvas.height;
     minReal = -2.0;
@@ -129,7 +132,8 @@ function createVertexBuffer(data) {
 function doRenderLoop() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Set uniforms
+    // Update uniforms
+    gl.uniform1i(uniforms.maxIterationCount, maxIterationCount);
     gl.uniform2fv(uniforms.viewportSize, viewportSize);
     gl.uniform1f(uniforms.minReal, minReal);
     gl.uniform1f(uniforms.maxReal, maxReal);

@@ -1,7 +1,6 @@
 precision highp float;
 
-const int maxNumIterations = 2000;
-
+uniform int maxIterationCount;
 uniform vec2 viewportSize;
 uniform float minReal;
 uniform float maxReal;
@@ -15,9 +14,14 @@ void main() {
     vec2 c = vec2(real, img);
 
     vec2 z = c; // TODO: must start with 0 instead?
-    int numIterations = 0;
+    int iterationCount = 0;
 
-    for (int i = 0; i < maxNumIterations; i++) {
+    for (int i = 0; i < 100000; i++) {
+        // an ugly hack because loop index cannot be compared with non-constant expression
+        if (iterationCount >= maxIterationCount) {
+            break;
+        }
+
         float y = 2.0 * z.x * z.y + c.y;
         z.x = z.x * z.x - z.y * z.y + c.x;
         z.y = y;
@@ -27,10 +31,10 @@ void main() {
             break;
         }
 
-        numIterations++;
+        iterationCount++;
     }
 
-    if (numIterations >= maxNumIterations) {
+    if (iterationCount >= maxIterationCount) {
         discard;
     }
 
