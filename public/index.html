@@ -8,6 +8,12 @@
         <div align="center">
             <label id="fps"></label><br>
             <canvas id="gl-canvas" width="640" height="480"></canvas>
+            <div>
+                <label>Iterations:</label>
+                <label id="iterationsLabel"></label>
+                <input type="range" id="iterationsSlider" min="1" max="2000" value="100"
+                       oninput="onIterationsSliderChanged()">
+            </div>
         </div>
         <script src="src/app.js"></script>
     </body>

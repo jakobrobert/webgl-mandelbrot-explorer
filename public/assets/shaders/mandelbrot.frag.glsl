@@ -16,7 +16,7 @@ void main() {
     vec2 z = c; // TODO: must start with 0 instead?
     int iterationCount = 0;
 
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < 10000; i++) {
         // an ugly hack because loop index cannot be compared with non-constant expression
         if (iterationCount >= maxIterationCount) {
             break;

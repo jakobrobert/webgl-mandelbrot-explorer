@@ -28,6 +28,11 @@ function init() {
             .then(fragmentShaderSource => start(vertexShaderSource, fragmentShaderSource)));
 }
 
+function onIterationsSliderChanged() {
+    maxIterationCount = document.getElementById("iterationsSlider").value;
+    document.getElementById("iterationsLabel").innerText = maxIterationCount;
+}
+
 function start(vertexShaderSource, fragmentShaderSource) {
     canvas = document.getElementById("gl-canvas");
     gl = canvas.getContext("webgl");
@@ -35,6 +40,9 @@ function start(vertexShaderSource, fragmentShaderSource) {
         alert("Your browser does not support WebGL!");
         return;
     }
+
+    // call for initial value of slider
+    onIterationsSliderChanged();
 
     fpsLabel = document.getElementById("fps");
 
@@ -82,7 +90,6 @@ function start(vertexShaderSource, fragmentShaderSource) {
         2 * Float32Array.BYTES_PER_ELEMENT, 0);
 
     // Set CPU-Side variables
-    maxIterationCount = 2000;
     viewportSize = [canvas.width, canvas.height];
     const aspectRatio = canvas.width / canvas.height;
     minReal = -2.0;
