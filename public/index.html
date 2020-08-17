@@ -9,6 +9,11 @@
             <label id="fps"></label><br>
             <canvas id="gl-canvas" width="640" height="480"></canvas>
             <div>
+                <label>Zoom:</label>
+                <input type="button" value="-" onclick="onZoomMinusButtonClicked()">
+                <input type="button" value="+" onclick="onZoomPlusButtonClicked()">
+            </div>
+            <div>
                 <label>Iterations:</label>
                 <label id="iterationsLabel"></label>
                 <input type="range" id="iterationsSlider" min="1" max="2000" value="100"

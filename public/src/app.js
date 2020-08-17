@@ -26,11 +26,6 @@ function init() {
             .then(fragmentShaderSource => start(vertexShaderSource, fragmentShaderSource)));
 }
 
-function onIterationsSliderChanged() {
-    maxIterationCount = document.getElementById("iterationsSlider").value;
-    document.getElementById("iterationsLabel").innerText = maxIterationCount;
-}
-
 function start(vertexShaderSource, fragmentShaderSource) {
     canvas = document.getElementById("gl-canvas");
     gl = canvas.getContext("webgl");
@@ -46,7 +41,7 @@ function start(vertexShaderSource, fragmentShaderSource) {
 
     fpsLabel = document.getElementById("fps");
 
-    canvas.addEventListener("wheel", onZoom);
+    canvas.addEventListener("wheel", onWheel);
     canvas.addEventListener("pointermove", onPointerMove);
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
@@ -164,28 +159,37 @@ function updateFPS() {
     }
 }
 
-function onZoom(event) {
+function onZoomMinusButtonClicked() {
+    // increase range zoom out
+    const factor = ZOOM_FACTOR;
+    zoomByFactor(factor);
+}
+
+function onZoomPlusButtonClicked() {
+    // decrease range to zoom in
+    const factor = 1.0 / ZOOM_FACTOR;
+    zoomByFactor(factor);
+}
+
+function onIterationsSliderChanged() {
+    maxIterationCount = document.getElementById("iterationsSlider").value;
+    document.getElementById("iterationsLabel").innerText = maxIterationCount;
+}
+
+function onWheel(event) {
     event.preventDefault(); // to prevent scrolling
     let factor;
     if (event.deltaY < 0) {
         // wheel up -> decrease range to zoom in
         factor = 1.0 / ZOOM_FACTOR;
     } else if (event.deltaY > 0) {
-        // wheel down -> increase range to zoom out
+        // wheel down -> increase range zoom out
         factor = ZOOM_FACTOR;
     } else {
         // probably never occurs
         return;
     }
-    // Keep center point the same, zoom about this point
-    const centerReal = 0.5 * (minReal + maxReal);
-    const centerImg = 0.5 * (minImg + maxImg);
-    const newRealRange = factor * (maxReal - minReal);
-    const newImgRange = factor * (maxImg - minImg);
-    minReal = centerReal - 0.5 * newRealRange;
-    maxReal = centerReal + 0.5 * newRealRange;
-    minImg = centerImg - 0.5 * newImgRange;
-    maxImg = centerImg + 0.5 * newImgRange;
+    zoomByFactor(factor);
 }
 
 function onPointerMove(event) {
@@ -200,4 +204,16 @@ function onPointerMove(event) {
     // + instead of - for img because y-axis is inverted
     minImg += imgDelta;
     maxImg += imgDelta;
+}
+
+function zoomByFactor(factor) {
+    // Keep center point the same, zoom about this point
+    const centerReal = 0.5 * (minReal + maxReal);
+    const centerImg = 0.5 * (minImg + maxImg);
+    const newRealRange = factor * (maxReal - minReal);
+    const newImgRange = factor * (maxImg - minImg);
+    minReal = centerReal - 0.5 * newRealRange;
+    maxReal = centerReal + 0.5 * newRealRange;
+    minImg = centerImg - 0.5 * newImgRange;
+    maxImg = centerImg + 0.5 * newImgRange;
 }
