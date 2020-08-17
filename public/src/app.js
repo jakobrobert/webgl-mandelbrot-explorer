@@ -189,6 +189,7 @@ function onPointerMove(event) {
     if (event.buttons !== 1) {
         return;
     }
+
     const realDelta = (event.movementX / canvas.width) * (maxReal - minReal);
     const imgDelta = (event.movementY / canvas.height) * (maxImg - minImg);
     // inverted, moving mouse to the right moves viewport to the left
@@ -197,6 +198,8 @@ function onPointerMove(event) {
     // + instead of - for img because y-axis is inverted
     minImg += imgDelta;
     maxImg += imgDelta;
+
+    updateRangeLabels();
 }
 
 function zoomByFactor(factor) {
@@ -209,4 +212,14 @@ function zoomByFactor(factor) {
     maxReal = centerReal + 0.5 * newRealRange;
     minImg = centerImg - 0.5 * newImgRange;
     maxImg = centerImg + 0.5 * newImgRange;
+
+    updateRangeLabels();
+}
+
+function updateRangeLabels() {
+    const realRangeLabel = document.getElementById("realRangeLabel");
+    realRangeLabel.innerText = "[" + minReal.toFixed(8) + ", " + maxReal.toFixed(8) + "]";
+
+    const imgRangeLabel = document.getElementById("imgRangeLabel");
+    imgRangeLabel.innerText = "[" + minImg.toFixed(8) + ", " + maxImg.toFixed(8) + "]";
 }
