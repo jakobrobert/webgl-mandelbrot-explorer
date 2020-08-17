@@ -34,6 +34,17 @@ function start(vertexShaderSource, fragmentShaderSource) {
         return;
     }
 
+    // Set CPU-Side variables
+    viewportSize = [canvas.width, canvas.height];
+    const aspectRatio = canvas.width / canvas.height;
+    minReal = -2.0;
+    maxReal = 2.0;
+    minImg = -2.0 / aspectRatio;
+    maxImg = 2.0 / aspectRatio;
+
+    // need to update labels with initial values
+    updateRangeLabels();
+
     // small hack: need to set initial value of slider,
     // for some reason slider always gets the max value as the initial
     document.getElementById("iterationsSlider").value = 200;
@@ -82,16 +93,8 @@ function start(vertexShaderSource, fragmentShaderSource) {
     gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false,
         2 * Float32Array.BYTES_PER_ELEMENT, 0);
 
-    // Set CPU-Side variables
-    viewportSize = [canvas.width, canvas.height];
-    const aspectRatio = canvas.width / canvas.height;
-    minReal = -2.0;
-    maxReal = 2.0;
-    minImg = -2.0 / aspectRatio;
-    maxImg = 2.0 / aspectRatio;
-
+    // start render loop
     lastTime = performance.now();
-
     requestAnimationFrame(doRenderLoop);
 }
 
