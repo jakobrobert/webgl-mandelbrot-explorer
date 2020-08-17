@@ -48,10 +48,10 @@ function start(vertexShaderSource, fragmentShaderSource) {
 
     fpsLabel = document.getElementById("fps");
 
-    addEventListener("wheel", onZoom);
-    addEventListener("mousedown", onMouseDown);
-    addEventListener("mouseup", onMouseUp);
-    addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("wheel", onZoom);
+    canvas.addEventListener("mousedown", onMouseDown);
+    canvas.addEventListener("mouseup", onMouseUp);
+    canvas.addEventListener("mousemove", onMouseMove);
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
