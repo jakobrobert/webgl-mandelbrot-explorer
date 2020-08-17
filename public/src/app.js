@@ -19,6 +19,7 @@ let maxImg;
 let uniforms;
 
 let mousePressed = false;
+let pointerDown = false;
 
 function init() {
     fetch("assets/shaders/mandelbrot.vert.glsl")
@@ -49,9 +50,9 @@ function start(vertexShaderSource, fragmentShaderSource) {
     fpsLabel = document.getElementById("fps");
 
     canvas.addEventListener("wheel", onZoom);
-    canvas.addEventListener("mousedown", onMouseDown);
-    canvas.addEventListener("mouseup", onMouseUp);
-    canvas.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointermove", onPointerMove);
 
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -192,20 +193,20 @@ function onZoom(event) {
     maxImg = centerImg + 0.5 * newImgRange;
 }
 
-function onMouseDown(event) {
+function onPointerDown(event) {
     if (event.button === 0) {
-        mousePressed = true;
+        pointerDown = true;
     }
 }
 
-function onMouseUp(event) {
+function onPointerUp(event) {
     if (event.button === 0) {
-        mousePressed = false;
+        pointerDown = false;
     }
 }
 
-function onMouseMove(event) {
-    if (!mousePressed) {
+function onPointerMove(event) {
+    if (!pointerDown) {
         return;
     }
     const realDelta = (event.movementX / canvas.width) * (maxReal - minReal);
