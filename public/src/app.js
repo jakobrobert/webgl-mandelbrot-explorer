@@ -160,15 +160,13 @@ function updateFPS() {
 }
 
 function onZoomMinusButtonClicked() {
-    // increase range zoom out
-    const factor = ZOOM_FACTOR;
-    zoomByFactor(factor);
+    // increase range to zoom out
+    zoomByFactor(ZOOM_FACTOR);
 }
 
 function onZoomPlusButtonClicked() {
     // decrease range to zoom in
-    const factor = 1.0 / ZOOM_FACTOR;
-    zoomByFactor(factor);
+    zoomByFactor(1.0 / ZOOM_FACTOR);
 }
 
 function onIterationsSliderChanged() {
@@ -178,18 +176,13 @@ function onIterationsSliderChanged() {
 
 function onWheel(event) {
     event.preventDefault(); // to prevent scrolling
-    let factor;
     if (event.deltaY < 0) {
         // wheel up -> decrease range to zoom in
-        factor = 1.0 / ZOOM_FACTOR;
+        zoomByFactor(1.0 / ZOOM_FACTOR);
     } else if (event.deltaY > 0) {
         // wheel down -> increase range zoom out
-        factor = ZOOM_FACTOR;
-    } else {
-        // probably never occurs
-        return;
+        zoomByFactor(ZOOM_FACTOR);
     }
-    zoomByFactor(factor);
 }
 
 function onPointerMove(event) {
